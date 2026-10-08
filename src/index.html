@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSSP System Call Monitor Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px; }
+        .container { max-width: 900px; margin: auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; font-size: 24px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: #334155; padding: 20px; border-radius: 8px; text-align: center; border-left: 5px solid #38bdf8; }
+        .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #94a3b8; text-transform: uppercase; }
+        .card p { margin: 0; font-size: 28px; font-weight: bold; color: #f1f5f9; }
+        .section-title { font-size: 18px; color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px; }
+        .status-box { background: #064e3b; color: #34d399; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 16px; border: 1px solid #059669; }
+        .btn { display: block; width: 100%; background: #0284c7; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+        .btn:hover { background: #0369a1; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 OSSP System Call Monitor Dashboard</h1>
+    
+    <div class="grid">
+        <div class="card">
+            <h3>Total Intercepted</h3>
+            <p id="total">-</p>
+        </div>
+        <div class="card" style="border-left-color: #f59e0b;">
+            <h3>Execution Overhead</h3>
+            <p id="overhead">-</p>
+        </div>
+        <div class="card" style="border-left-color: #ef4444;">
+            <h3>Error Codes</h3>
+            <p id="errors">-</p>
+        </div>
+    </div>
+
+    <div class="section-title">System Call Categorization</div>
+    <div class="grid">
+        <div class="card">
+            <h3>File Management</h3>
+            <p id="file_mgmt">-</p>
+        </div>
+        <div class="card">
+            <h3>Process Control</h3>
+            <p id="proc_ctrl">-</p>
+        </div>
+        <div class="card">
+            <h3>Memory Management</h3>
+            <p id="mem_mgmt">-</p>
+        </div>
+        <div class="card">
+            <h3>Information Maint.</h3>
+            <p id="info_maint">-</p>
+        </div>
+    </div>
+
+    <div class="section-title">Security & Mode Status</div>
+    <div id="status" class="status-box">Loading status...</div>
+
+    <button class="btn" onclick="loadData()">🔄 Refresh Dashboard Data</button>
+</div>
+
+<script>
+    function loadData() {
+        fetch('dashboard_data.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total').innerText = data.total;
+                document.getElementById('overhead').innerText = data.overhead + "s";
+                document.getElementById('errors').innerText = data.errors;
+                document.getElementById('file_mgmt').innerText = data.file_mgmt;
+                document.getElementById('proc_ctrl').innerText = data.proc_ctrl;
+                document.getElementById('mem_mgmt').innerText = data.mem_mgmt;
+                document.getElementById('info_maint').innerText = data.info_maint;
+                document.getElementById('status').innerText = "Mode Transition Status: " + data.status;
+            })
+            .catch(error => {
+                document.getElementById('status').innerText = "⚠️ Run your C tracer first to generate data!";
+            });
+    }
+    // Load automatically on open
+    loadData();
+</script>
+
+</body>
+</html>
